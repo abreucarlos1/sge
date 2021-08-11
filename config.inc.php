@@ -18,15 +18,15 @@ $host = explode(":",$_SERVER['HTTP_HOST']);
 if($host[0]!='localhost')
 {
 
-	define('DATABASE',"epiz_28706689_002");
+	define('DATABASE',"");
 
-	define('DBHOST',"sql203.epizy.com");
+	define('DBHOST',"");
 
-	define('DBUSER',"epiz_28706689");
+	define('DBUSER',"");
 
-	define('DBPASS',"nHJGCaSMw5u");
+	define('DBPASS',"");
 
-	define('DB',"epiz_28706689_002");
+	define('DB',"");
 }
 else
 {
