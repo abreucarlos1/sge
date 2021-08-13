@@ -20,34 +20,33 @@
 			}
 
             //VERIFICA O TAMANHO DO ARQUIVO DE LOG
-            $size = filesize($dir . DIRECTORY_SEPARATOR . $nome_arquivo);
-
-            //PERCORRE OS SUFIXOS DE ARQUIVOS DE LOG PARA INCREMENTAR O SUFIXO DE BACKUP
-            for($i=1;$i<=999;$i++)
+            if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo))
             {
-                if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . sprintf("%03d",$i)))
+                $size = filesize($dir . DIRECTORY_SEPARATOR . $nome_arquivo);
+                //PERCORRE OS SUFIXOS DE ARQUIVOS DE LOG PARA INCREMENTAR O SUFIXO DE BACKUP
+                for($i=1;$i<=999;$i++)
                 {
-                    $num_atual = sprintf("%03d",$i + 1);
-
-                    break;
+                    if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . sprintf("%03d",$i)))
+                    {
+                        $num_atual = sprintf("%03d",$i + 1);
+                        break;
+                    }
+                }
+                //NÃO ACHOU O ARQUIVO
+                if(empty($num_atual))
+                {
+                    $num_atual = sprintf("%03d",1);
+                }
+                //SE MAIOR QUE O TAMANHO DEFINIDO, RENOMEIA O ARQUIVO PRINCIPAL PARA BACKUP
+                if($size >= LOG_SIZE)
+                {
+                    if(!rename($dir . DIRECTORY_SEPARATOR . $nome_arquivo, $dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . $num_atual))
+                    {
+                        die("Erro ao renomear o arquivo.");
+                    }
                 }
             }
-
-            //NÃO ACHOU O ARQUIVO
-            if(empty($num_atual))
-            {
-                $num_atual = sprintf("%03d",1);
-            }
-
-            //SE MAIOR QUE O TAMANHO DEFINIDO, RENOMEIA O ARQUIVO PRINCIPAL PARA BACKUP
-            if($size >= LOG_SIZE)
-            {
-                if(!rename($dir . DIRECTORY_SEPARATOR . $nome_arquivo, $dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . $num_atual))
-                {
-                    die("Erro ao renomear o arquivo.");
-                }
-            }
-
+            
             $handle = fopen($dir . DIRECTORY_SEPARATOR . $nome_arquivo , "a");
 
             if (is_writable($dir . DIRECTORY_SEPARATOR . $nome_arquivo)) 
@@ -90,31 +89,31 @@
 			}
 
             //VERIFICA O TAMANHO DO ARQUIVO DE LOG
-            $size = filesize($dir . DIRECTORY_SEPARATOR . $nome_arquivo);
-
-            //PERCORRE OS SUFIXOS DE ARQUIVOS DE LOG PARA INCREMENTAR O SUFIXO DE BACKUP
-            for($i=1;$i<=999;$i++)
+            if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo))
             {
-                if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . sprintf("%03d",$i)))
-                {
-                    $num_atual = sprintf("%03d",$i + 1);
+                $size = filesize($dir . DIRECTORY_SEPARATOR . $nome_arquivo);
 
-                    break;
+                //PERCORRE OS SUFIXOS DE ARQUIVOS DE LOG PARA INCREMENTAR O SUFIXO DE BACKUP
+                for($i=1;$i<=999;$i++)
+                {
+                    if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . sprintf("%03d",$i)))
+                    {
+                        $num_atual = sprintf("%03d",$i + 1);
+                        break;
+                    }
                 }
-            }
-
-            //NÃO ACHOU O ARQUIVO
-            if(empty($num_atual))
-            {
-                $num_atual = sprintf("%03d",1);
-            }
-
-            //SE MAIOR QUE O TAMANHO DEFINIDO, RENOMEIA O ARQUIVO PRINCIPAL PARA BACKUP
-            if($size >= LOG_SIZE)
-            {
-                if(!rename($dir . DIRECTORY_SEPARATOR . $nome_arquivo, $dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . $num_atual))
+                //NÃO ACHOU O ARQUIVO
+                if(empty($num_atual))
                 {
-                    die("Erro ao renomear o arquivo.");
+                    $num_atual = sprintf("%03d",1);
+                }
+                //SE MAIOR QUE O TAMANHO DEFINIDO, RENOMEIA O ARQUIVO PRINCIPAL PARA BACKUP
+                if($size >= LOG_SIZE)
+                {
+                    if(!rename($dir . DIRECTORY_SEPARATOR . $nome_arquivo, $dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . $num_atual))
+                    {
+                        die("Erro ao renomear o arquivo.");
+                    }
                 }
             }
 
@@ -188,31 +187,34 @@
                 }
 
                 //VERIFICA O TAMANHO DO ARQUIVO DE LOG
-                $size = filesize($dir . DIRECTORY_SEPARATOR . $nome_arquivo);
-
-                //PERCORRE OS SUFIXOS DE ARQUIVOS DE LOG PARA INCREMENTAR O SUFIXO DE BACKUP
-                for($i=1;$i<=999;$i++)
+                if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo))
                 {
-                    if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . sprintf("%03d",$i)))
-                    {
-                        $num_atual = sprintf("%03d",$i + 1);
+                    $size = filesize($dir . DIRECTORY_SEPARATOR . $nome_arquivo);
 
-                        break;
+                    //PERCORRE OS SUFIXOS DE ARQUIVOS DE LOG PARA INCREMENTAR O SUFIXO DE BACKUP
+                    for($i=1;$i<=999;$i++)
+                    {
+                        if(file_exists($dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . sprintf("%03d",$i)))
+                        {
+                            $num_atual = sprintf("%03d",$i + 1);
+
+                            break;
+                        }
                     }
-                }
 
-                //NÃO ACHOU O ARQUIVO
-                if(empty($num_atual))
-                {
-                    $num_atual = sprintf("%03d",1);
-                }
-
-                //SE MAIOR QUE O TAMANHO DEFINIDO, RENOMEIA O ARQUIVO PRINCIPAL PARA BACKUP
-                if($size >= LOG_SIZE)
-                {
-                    if(!rename($dir . DIRECTORY_SEPARATOR . $nome_arquivo, $dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . $num_atual))
+                    //NÃO ACHOU O ARQUIVO
+                    if(empty($num_atual))
                     {
-                        die("Erro ao renomear o arquivo.");
+                        $num_atual = sprintf("%03d",1);
+                    }
+
+                    //SE MAIOR QUE O TAMANHO DEFINIDO, RENOMEIA O ARQUIVO PRINCIPAL PARA BACKUP
+                    if($size >= LOG_SIZE)
+                    {
+                        if(!rename($dir . DIRECTORY_SEPARATOR . $nome_arquivo, $dir . DIRECTORY_SEPARATOR . $nome_arquivo . "." . $num_atual))
+                        {
+                            die("Erro ao renomear o arquivo.");
+                        }
                     }
                 }
 

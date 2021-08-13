@@ -43,9 +43,7 @@ function autenticacao($dados_form)
 
 	$logs = new logs();
 
-	$pass_adm = gerar_hash('admin', 'admin'); //senha/nome
-
-	$pass_administrador = gerar_hash('admin', 'administrador');
+	$registra_adm = false;
 
 	// Recupera o login
 	$login = isset($dados_form["login"]) ? addslashes(trim($dados_form["login"])) : FALSE;
@@ -60,66 +58,24 @@ function autenticacao($dados_form)
 	}
 	else
 	{
-		//verifica se administrador
-		if(($login == 'administrador' || $login == 'admin'))
+
+		/**
+		* Executa a consulta no banco de dados.
+		* Caso o número de linhas retornadas seja 1 o login é válido,
+		* caso 0, inválido.
+		*/
+		$sql = "SELECT data_troca, condicao, senha, perfil, login, usuarios.id_usuario, nivel_atuacao, id_funcionario, id_setor_aso, nome, status FROM ".DATABASE.".usuarios ";
+		$sql .= "LEFT JOIN ".DATABASE.".funcionarios ON (usuarios.id_usuario = funcionarios.id_usuario AND funcionarios.reg_del = 0 ) ";
+		$sql .= "WHERE usuarios.login = '" . $login . "' ";
+		$sql .= "AND usuarios.reg_del = 0 ";
+
+		$db->select($sql,'MYSQL',true);
+
+		if($db->erro!='')
 		{
-			// Agora verifica a senha
-			if(!(valida_pw($senha,$login,$pass_adm) || valida_pw($senha,$login,$pass_administrador)))
-			{
-
-				$resposta->addAssign("mensagem","innerHTML",'Senha incorreta.');
-						
-				return $resposta;
-			}
-
-			if(LOG_ACOES[0])
-			{
-				$logs->log_acoes('0','0','LOGIN','ADMINISTRADOR','autenticacao',basename(__FILE__));
-			}
-
-			$_SESSION["admin"] = TRUE;
-
-			$_SESSION["perfil"] = 1;
-			
-			$_SESSION["login"] = $login;
-			
-			$_SESSION["nome_usuario"] = stripslashes("ADMINISTRADOR DO SISTEMA");			
-			
-			$_SESSION["id_usuario"] = 0;
-
-			$_SESSION["id_funcionario"] = 0;
-			
-			if($dados_form["pagina"]!="")
-			{
-				$resposta->addRedirect($dados_form["pagina"]);
-			}
-			else
-			{
-				$resposta->addRedirect("inicio.php");
-			}		
-		}
-		else
-		{
-			$_SESSION["admin"] = FALSE;
-			
-			/**
-			* Executa a consulta no banco de dados.
-			* Caso o número de linhas retornadas seja 1 o login é válido,
-			* caso 0, inválido.
-			*/
-
-			$sql = "SELECT data_troca, condicao, senha, perfil, login, usuarios.id_usuario, nivel_atuacao, id_funcionario, id_setor_aso, nome, status  FROM ".DATABASE.".usuarios ";
-			$sql .= "LEFT JOIN ".DATABASE.".funcionarios ON (usuarios.id_usuario = funcionarios.id_usuario AND funcionarios.reg_del = 0 ) ";
-			$sql .= "WHERE usuarios.login = '" . $login . "' ";
-			$sql .= "AND usuarios.reg_del = 0 ";
-
-			$db->select($sql,'MYSQL',true);
-
-			if($db->erro!='')
-			{
 				$erro = addslashes($db->erro . $sql);
 
-				$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 104.';
+				$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 67.';
 
 				//MOSTRA TELA COM O COMANDO EXECUTADO CASO ESTEJA EM DEBUG
 				if(DEBUG)
@@ -147,14 +103,90 @@ function autenticacao($dados_form)
 				}
 
 				return $resposta;
+		}
+
+		$num_regs = $db->numero_registros;
+		
+		$dados = $db->array_select[0];
+		
+		if(LOG_ACOES[0])
+		{
+			$logs->log_acoes($dados["id_usuario"],$dados["id_usuario"],'LOGIN',$sql,'autenticacao',basename(__FILE__));
+		}
+
+		//$resposta->addAlert($num_regs);
+
+		// Caso o usuário tenha digitado um login inválido.
+		if($num_regs<=0)
+		{
+			//$resposta->addAssign("mensagem","innerHTML","Login/Senha inválida1");
+
+			//return $resposta;
+
+			$pass_adm = gerar_hash(SENHA_ADM, 'admin'); //senha/nome
+
+			$pass_administrador = gerar_hash(SENHA_ADM, 'administrador');
+		}
+
+		//verifica se administrador
+		if(($login == 'administrador' || $login == 'admin'))
+		{
+			if($dados["senha"]!='')			
+			{
+				$pass_adm = $dados["senha"];
+
+				$pass_administrador = $dados["senha"];
 			}
-			
-			$dados = $db->array_select[0];
-			
+			else 
+			{
+				$registra_adm = true;
+			}
+
+			// Agora verifica a senha
+			if(!(valida_pw($senha,$login,$pass_adm) || valida_pw($senha,$login,$pass_administrador)))
+			{
+
+				$resposta->addAssign("mensagem","innerHTML",'Login/Senha inválida.');
+						
+				return $resposta;
+			}
+
 			if(LOG_ACOES[0])
 			{
-				$logs->log_acoes($dados["id_usuario"],$dados["id_usuario"],'LOGIN',$sql,'autenticacao',basename(__FILE__));
+				$logs->log_acoes('0','0','LOGIN','ADMINISTRADOR','autenticacao',basename(__FILE__));
 			}
+
+			if($registra_adm)
+			{
+				$resposta->addScript("troca_senha('administrador','1',true);");
+				
+				return $resposta;	
+			}
+
+			$_SESSION["admin"] = TRUE;
+
+			$_SESSION["perfil"] = 1;
+			
+			$_SESSION["login"] = $login;
+			
+			$_SESSION["nome_usuario"] = stripslashes("ADMINISTRADOR DO SISTEMA");			
+			
+			$_SESSION["id_usuario"] = $dados["id_usuario"];
+
+			$_SESSION["id_funcionario"] = 0;
+			
+			if($dados_form["pagina"]!="")
+			{
+				$resposta->addRedirect($dados_form["pagina"]);
+			}
+			else
+			{
+				$resposta->addRedirect("inicio.php");
+			}		
+		}
+		else
+		{
+			$_SESSION["admin"] = FALSE;
 			
 			$data_referencia = date("d/m/Y");
 			
@@ -169,7 +201,7 @@ function autenticacao($dados_form)
 			else
 			{
 				// Caso o usuário tenha digitado um login válido o número de linhas será 1..
-				if($db->numero_registros>=1)
+				if($num_regs>=1)
 				{	
 					// Obtém os dados do usuário, para poder verificar a senha e passar os demais dados para a sessão									
 					// Agora verifica a senha
@@ -230,7 +262,7 @@ function autenticacao($dados_form)
 					// Senha inválida
 					else
 					{
-						$resposta->addAssign("mensagem","innerHTML","Senha inválida.");
+						$resposta->addAssign("mensagem","innerHTML","Login/Senha inválida.");
 						
 						return $resposta;
 					}
@@ -238,7 +270,7 @@ function autenticacao($dados_form)
 				// login inválido
 				else
 				{
-					$resposta->addAssign("mensagem","innerHTML","Login inválido");
+					$resposta->addAssign("mensagem","innerHTML","Login/Senha inválida");
 				}
 			}			
 		}
@@ -400,9 +432,119 @@ function enviar($dados_form)
 			
 		}
 		else
-		{	
-			//$resposta->addAlert("Usuário inexistente.");
-			$resposta->addScript("mdAlert(2,'Usuário inexistente.','USUÁRIO');");		
+		{
+			//verifica se é adm
+			if($dados_form["adm"])
+			{
+				$senha = gerar_hash(trim($dados_form["senha"]), 'admin');
+
+				$isql = "INSERT INTO ".DATABASE.".usuarios (nome, login, senha, status, data_troca, perfil) VALUES (";
+				$isql .= "'Administrador', ";
+				$isql .= "'admin', ";
+				$isql .= "'".$senha."', ";
+				$isql .= "'0', ";
+				$isql .= "'".date("Y-m-d")."',";
+				$isql .= "'1')";
+
+				$db->insert($isql,'MYSQL');
+			
+				if($db->erro!='')
+				{
+					$erro = addslashes($db->erro . $isql);
+	
+					$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 441.';
+			
+					//MOSTRA TELA COM O COMANDO EXECUTADO CASO ESTEJA EM DEBUG
+					if(DEBUG)
+					{
+						//Apresenta o popup com o alerta
+						$resposta->addScript("mdAlert(2,'".$erro."');");
+			
+						//$resposta->addAssign("modalInfoBody","innerHTML",$erro);
+					}
+					else 
+					{
+						$resposta->addScript("mdAlert(2,'".$err_arq."');");
+					}
+			
+					//GRAVA LOG DE ERRO
+					if(LOG)
+					{
+						$texto = "Date: " . date('Y-m-d H:i:s') . " - User: " . $_SESSION["nome_usuario"] . CRLF; 
+			
+						$texto .= $err_arq . CRLF;
+			
+						$texto .= $erro . CRLF;
+			
+						$logs->log_file($texto);
+					}
+			
+					return $resposta;
+				}
+				
+				if(LOG_ACOES[0])
+				{
+					$logs->log_acoes(1,$db->insert_id,'INCLUSAO',$isql,'enviar',basename(__FILE__));
+				}
+
+				$senha = gerar_hash(trim($dados_form["senha"]), 'administrador');
+
+				$isql = "INSERT INTO ".DATABASE.".usuarios (nome, login, senha, status, data_troca, perfil) VALUES (";
+				$isql .= "'Administrador', ";
+				$isql .= "'administrador', ";
+				$isql .= "'".$senha."', ";
+				$isql .= "'0', ";
+				$isql .= "'".date("Y-m-d")."',";
+				$isql .= "'1')";
+
+				$db->insert($isql,'MYSQL');
+			
+				if($db->erro!='')
+				{
+					$erro = addslashes($db->erro . $isql);
+	
+					$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 490.';
+			
+					//MOSTRA TELA COM O COMANDO EXECUTADO CASO ESTEJA EM DEBUG
+					if(DEBUG)
+					{
+						//Apresenta o popup com o alerta
+						$resposta->addScript("mdAlert(2,'".$erro."');");
+			
+						//$resposta->addAssign("modalInfoBody","innerHTML",$erro);
+					}
+					else 
+					{
+						$resposta->addScript("mdAlert(2,'".$err_arq."');");
+					}
+			
+					//GRAVA LOG DE ERRO
+					if(LOG)
+					{
+						$texto = "Date: " . date('Y-m-d H:i:s') . " - User: " . $_SESSION["nome_usuario"] . CRLF; 
+			
+						$texto .= $err_arq . CRLF;
+			
+						$texto .= $erro . CRLF;
+			
+						$logs->log_file($texto);
+					}
+			
+					return $resposta;
+				}
+				
+				if(LOG_ACOES[0])
+				{
+					$logs->log_acoes(1,$db->insert_id,'INCLUSAO',$isql,'enviar',basename(__FILE__));
+				}
+
+				$resposta->addRedirect("index.php");
+			}
+			else
+			{
+				//$resposta->addAlert("Usuário inexistente.");
+				$resposta->addScript("mdAlert(2,'Usuário inexistente.','USUÁRIO');");
+			}		
 		}
 	}
 	else
@@ -455,7 +597,7 @@ function atualiza($dados_form)
 		{
 			$erro = addslashes($db->erro . $sql);
 
-			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 431.';
+			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 588.';
 
 			//MOSTRA TELA COM O COMANDO EXECUTADO CASO ESTEJA EM DEBUG
 			if(DEBUG)
@@ -537,7 +679,7 @@ function atualiza($dados_form)
 						{
 							$erro = addslashes($db->erro . $usql);
 
-							$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 510.';
+							$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 667.';
 			
 							//MOSTRA TELA COM O COMANDO EXECUTADO CASO ESTEJA EM DEBUG
 							if(DEBUG)
@@ -599,6 +741,8 @@ $xajax->processRequests();
 
 $smarty->assign("xajax_javascript",$xajax->printJavascript(XAJAX_DIR));
 
+$smarty->assign("body_onload","");
+
 $smarty->assign("nome_empresa",NOME_EMPRESA);
 
 $smarty->assign("nome_sistema",NOME_SISTEMA . '-');
@@ -654,7 +798,7 @@ function esqueceusenha()
 	return true;
 }
 
-function troca_senha(login,id_usuario)
+function troca_senha(login,id_usuario,adm=false)
 {
 	//var dir_imagens = '<?php echo '/'. BASEDIR . '/imagens/'; ?>';
 
@@ -665,6 +809,7 @@ function troca_senha(login,id_usuario)
 	conteudo += '<label for="login" class="labels">login</label><br />';
     conteudo += '<input name="login" id="login" type="text" class="caixa" readonly="readonly" value="'+login+'" size="50"/><br /> ';
     conteudo += '<input name="id_usuario" id="id_usuario" type="hidden"  value="'+id_usuario+'"/>';
+	conteudo += '<input name="adm" id="adm" type="hidden"  value="'+adm+'"/>';
 	conteudo += '<label for="senha" class="labels">Senha</label><br />';
     conteudo += '<input name="senha" type="password" placeholder="Senha" class="caixa" style="text-transform:none;" id="senha" onKeyPress=limpa_div("mensagem"); size="30" /><br >';
 	conteudo += '<label for="confsenha" class="labels">Confirme a senha</label><br />';

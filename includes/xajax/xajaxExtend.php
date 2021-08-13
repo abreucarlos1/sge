@@ -66,8 +66,8 @@ if(!function_exists('get_original_data'))
     {
         if($data)
         {
-            if(get_magic_quotes_gpc())
-            {
+            //if(get_magic_quotes_gpc())
+            //{
                 if (is_array($data))
                 {
                     foreach($data as $key=>$value)
@@ -79,7 +79,7 @@ if(!function_exists('get_original_data'))
                 {
                     $data = stripslashes($data);
                 }
-            }
+           // }
         }
         return $data;
     }

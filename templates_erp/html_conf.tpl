@@ -3,6 +3,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 <meta charset="utf-8>
+<meta name="author" content="Carlos Abreu">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -23,7 +24,7 @@
 <!-- FONTAWESOME-->
 <link href="<smarty>$smarty.const.DIR_PATH</smarty>includes/fontawesome/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
 
-<link rel="stylesheet" href="<smarty>$smarty.const.DIR_PATH</smarty>classes/classes_grid.css">
+<link rel="stylesheet" href="<smarty>$smarty.const.DIR_PATH</smarty>classes/classes.css">
 
 <!-- <link rel="shortcut icon" href="favicon.ico" > -->
 

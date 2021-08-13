@@ -1,6 +1,6 @@
 <?php
 
-	require_once(INCLUDE_DIR."smarty". DIRECTORY_SEPARATOR ."libs". DIRECTORY_SEPARATOR ."Smarty.class.php");
+	require_once(INCLUDE_DIR."smarty-3.1.39". DIRECTORY_SEPARATOR ."libs". DIRECTORY_SEPARATOR ."Smarty.class.php");
 	require_once(INCLUDE_DIR."xajax". DIRECTORY_SEPARATOR ."xajaxExtend.php");		
 	
 	//Classe com funcoes de configuracao e mensagens	

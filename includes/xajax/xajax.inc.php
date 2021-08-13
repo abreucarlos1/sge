@@ -170,7 +170,8 @@ class xajax
 	 * @param string  defaults to XAJAX_DEFAULT_CHAR_ENCODING defined above
 	 * @param boolean defaults to false
 	 */
-	function xajax($sRequestURI="",$sWrapperPrefix="xajax_",$sEncoding=XAJAX_DEFAULT_CHAR_ENCODING,$bDebug=false)
+	//function xajax($sRequestURI="",$sWrapperPrefix="xajax_",$sEncoding=XAJAX_DEFAULT_CHAR_ENCODING,$bDebug=false)
+	function __construct($sRequestURI="",$sWrapperPrefix="xajax_",$sEncoding=XAJAX_DEFAULT_CHAR_ENCODING,$bDebug=false)
 	{
 		$this->aFunctions = array();
 		$this->aObjects = array();
@@ -611,8 +612,9 @@ class xajax
 			for ($i = 0; $i < sizeof($aArgs); $i++)
 			{
 				// If magic quotes is on, then we need to strip the slashes from the args
-				if (get_magic_quotes_gpc() == 1 && is_string($aArgs[$i])) {
-				
+				//if (get_magic_quotes_gpc() == 1 && is_string($aArgs[$i]))
+				if (is_string($aArgs[$i])) 
+				{				
 					$aArgs[$i] = stripslashes($aArgs[$i]);
 				}
 				if (stristr($aArgs[$i],"<xjxobj>") != false)
@@ -1134,7 +1136,8 @@ class xajax
 			}
 			// If magic quotes is on, then we need to strip the slashes from the
 			// array values because of the parse_str pass which adds slashes
-			if (get_magic_quotes_gpc() == 1) {
+			//if (get_magic_quotes_gpc() == 1) 
+			//{
 				$newArray = array();
 				foreach ($aArray as $sKey => $sValue) {
 					if (is_string($sValue))
@@ -1143,7 +1146,7 @@ class xajax
 						$newArray[$sKey] = $sValue;
 				}
 				$aArray = $newArray;
-			}
+			//}
 		}
 		
 		return $aArray;

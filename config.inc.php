@@ -9,7 +9,7 @@
 
 @ini_set('display_errors', 1);
 
-@ini_set('error_reporting', E_ERROR | E_WARNING | E_PARSE | E_ALL);
+@ini_set('error_reporting', E_ERROR | E_WARNING | E_PARSE);
 
 @ini_set('default_charset', 'UTF-8');
 
@@ -47,7 +47,7 @@ define('ROOT_DIR', dirname(__DIR__)); //DIRETÓRIO RAIZ
 
 define('BASEDIR', basename(__DIR__)); //DIRETÓRIO BASE SITE
 
-define('SITE_PATH',ROOT_DIR.DIRECTORY_SEPARATOR.BASEDIR.DIRECTORY_SEPARATOR); //DIRETÓRIO COMPLETO
+define('SITE_PATH',ROOT_DIR.DIRECTORY_SEPARATOR.BASEDIR); //DIRETÓRIO COMPLETO
 
 define('DEBUG',FALSE); //DEFINE A APRESENTAÇÃO DE ERROS NO MODAL ALERT
 
@@ -58,6 +58,8 @@ define('LOG_ACOES',array(TRUE,'I','A','E','L')); //DEFINE QUAIS LOGS SERÃO GRAV
 define('LOG_ACESSOS',TRUE); // Define a gravação de logs de acesso
 
 define('LOG_SIZE',1024*1024*10); //DEFINE O TAMANHO DO ARQUIVO DE LOG (10 MB)
+
+define('SENHA_ADM','admin'); //senha de administrador, utilizada quando não existe usuário admin cadastrado
 
 define('DIAS_LIMITE',90); //dias de limite para senhas
 
@@ -141,7 +143,7 @@ define('DIRETORIO_ARQUIVOS','arquivos_sistema');
 
 //DEFINE O DIRETORIO RAIZ DA MONTAGEM (GUARDA DE ARQUIVOS)
 
-$diretorio = SITE_PATH . DIRETORIO_ARQUIVOS . DIRECTORY_SEPARATOR;
+$diretorio = SITE_PATH . DIRECTORY_SEPARATOR . DIRETORIO_ARQUIVOS . DIRECTORY_SEPARATOR;
 
 define('MOUNT_DIR',$diretorio);
 
@@ -275,20 +277,22 @@ $logs = new logs();
 $array_tables = array();
 
 //VERIFICA SE BANCO DE DADOS EXISTE
-$sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '".DATABASE."';";
+//$sql = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '".DATABASE."';";
 
-$db->select($sql,'MYSQL',true);
+//$db->select($sql,'MYSQL',true);
 
-if($db->erro!='')
-{
-  die ($db->erro);
-}
+//if($db->erro!='')
+//{
+  //die ($db->erro);
+//}
 
-$dados = $db->array_select[0];
+//$dados = $db->array_select[0];
+
+//die(print_r($dados,true));
 
 //caso não exista o banco de dados, cria
-if (empty($dados))
-{
+//if (empty($dados))
+//{
 	@ini_set(max_execution_time, 300);
 
 	require_once(INCLUDE_DIR."database.inc.php");
@@ -302,7 +306,7 @@ if (empty($dados))
 	//require_once(INCLUDE_DIR."database5.inc.php");
 	
 	@ini_set(max_execution_time, 120);
-}
+//}
 
 require_once(INCLUDE_DIR."include_email.inc.php");
 
