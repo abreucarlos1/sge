@@ -44,7 +44,7 @@ function tela()
 
 	if($db->erro!='')
 	{
-		$erro = addslashes($db->erro . $sql);
+		$erro = addslashes($db->erro);
 
 		$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 34.';
 
@@ -103,7 +103,7 @@ function tela()
 
 		if($db->erro!='')
 		{
-			$erro = addslashes($db->erro . $sql);
+			$erro = addslashes($db->erro);
 
 			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 92.';
 
@@ -219,7 +219,7 @@ function tela()
 
     if($db->erro!='')
     {
-        $erro = addslashes($db->erro . $sql);
+        $erro = addslashes($db->erro);
 
         $err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 205.';
 
@@ -356,7 +356,7 @@ function atualiza($dados_form)
 
 		if($db->erro!='')
 		{
-			$erro = addslashes($db->erro . $sql);
+			$erro = addslashes($db->erro);
 
 			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 234.';
 
@@ -428,7 +428,7 @@ function atualiza($dados_form)
 
 						if($db->erro!='')
 						{
-							$erro = addslashes($db->erro . $usql);
+							$erro = addslashes($db->erro);
 
 							$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 305.';
 			

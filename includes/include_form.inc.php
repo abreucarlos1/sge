@@ -39,7 +39,7 @@
 				{
 					if (!empty($resposta))
 					{
-						$erro = addslashes($db->erro . $sql);
+						$erro = addslashes($db->erro);
 
 						$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 214.';
 				
@@ -187,7 +187,7 @@
 
 		if($db->erro!='')
 		{
-			$erro = addslashes($db->erro . $sql);
+			$erro = addslashes($db->erro);
 
 			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 471.';
 	
@@ -318,7 +318,7 @@
 
 		if($db->erro!='')
 		{
-			$erro = addslashes($db->erro . $sql);
+			$erro = addslashes($db->erro);
 
 			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 607.';
 	

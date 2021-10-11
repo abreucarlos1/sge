@@ -73,7 +73,7 @@ function autenticacao($dados_form)
 
 		if($db->erro!='')
 		{
-				$erro = addslashes($db->erro . $sql);
+				$erro = addslashes($db->erro);
 
 				$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 67.';
 
@@ -299,7 +299,7 @@ function enviar($dados_form)
 
 		if($db->erro!='')
 		{
-			$erro = addslashes($db->erro . $sql);
+			$erro = addslashes($db->erro);
 
 			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 249.';
 
@@ -349,7 +349,7 @@ function enviar($dados_form)
 
 			if($db->erro!='')
 			{
-				$erro = addslashes($db->erro . $usql);
+				$erro = addslashes($db->erro);
 
 				$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 297.';
 
@@ -450,7 +450,7 @@ function enviar($dados_form)
 			
 				if($db->erro!='')
 				{
-					$erro = addslashes($db->erro . $isql);
+					$erro = addslashes($db->erro);
 	
 					$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 441.';
 			
@@ -501,7 +501,7 @@ function enviar($dados_form)
 			
 				if($db->erro!='')
 				{
-					$erro = addslashes($db->erro . $isql);
+					$erro = addslashes($db->erro);
 	
 					$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 490.';
 			
@@ -595,7 +595,7 @@ function atualiza($dados_form)
 
 		if($db->erro!='')
 		{
-			$erro = addslashes($db->erro . $sql);
+			$erro = addslashes($db->erro);
 
 			$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 588.';
 
@@ -677,7 +677,7 @@ function atualiza($dados_form)
 
 						if($db->erro!='')
 						{
-							$erro = addslashes($db->erro . $usql);
+							$erro = addslashes($db->erro);
 
 							$err_arq = 'Erro no arquivo ' . basename(__FILE__) . ', linha 667.';
 			
