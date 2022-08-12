@@ -155,6 +155,7 @@
 		{
 			$resposta->addAlert("Usuário não logado no sistema.");
 			//$resposta->addAlert($_SESSION["login"]);
+			$resposta->addRedirect('../index.php');
 
 		}
 	
